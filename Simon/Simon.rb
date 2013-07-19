@@ -4,6 +4,7 @@
 # Very basic Ruby implementation of Simon (http://eprint.iacr.org/2013/404.pdf)
 # Initially only Simon with 128 bit blocks and 256 bit key but intent to fully implement it later :)
 #
+# FYI: This is broken at the moment, 'WIP' as you might call it. -_-
 #
 
 class Simon
@@ -54,7 +55,7 @@ class Simon
       pt[index] = x 
       pt[index+1] = y
     }
-    pt.reverse.map { |x| [x.to_s(2).rjust(128,'0')].pack('b*') }.join
+    pt.map { |x| [x.to_s(2).rjust(128,'0')].pack('b*') }.join
   end
 
   def self.expand_key (key, block_size)
