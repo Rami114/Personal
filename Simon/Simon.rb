@@ -20,7 +20,7 @@ class Simon
     if key.size != 32 
       raise InvalidKeySizeException.new
     end
-    k = expand_key(key, 256)
+    k = expand_key(key, 64)
     # Padding and PT words
     pt = pad_PKCS7(pt, 128)
     pt = pt.chars.each_slice(N/8).map {|x| x.join.unpack('b*')[0].to_i(2)}.to_a
@@ -35,14 +35,14 @@ class Simon
       ct[index+1] = y
     }
     # Would like to know a nicer way to do this :/ :cringe:
-    ct.map { |x| [x.to_s(2).rjust(128,'0')].pack('b*') }.join
+    ct.map { |x| x.to_s(2).rjust(128,'0') }.pack('b*')
   end
 
   def self.decrypt_128_256 (ct, key)
     if key.size != 32
       raise InvalidKeySizeException.new
     end
-    k = expand_key(key, 256).reverse
+    k = expand_key(key, 64).reverse
     # Padding and PT words
     ct = ct.chars.each_slice(N/8).map {|x| x.join.unpack('b*')[0].to_i(2)}.to_a
     # Rounds
@@ -62,15 +62,15 @@ class Simon
     # Break the key into M implicitly N-bit sized pieces
     # Note that k0..kM-1 are in reverse order (i.e. k0 is last)
     # This could most definitely be done better I think
-      k = key.chars.each_slice(key.size/M).map {|x| x.join.unpack('b*')[0].to_i(2)}.to_a.reverse
-      for i in M..T-1
-        tmp = lcs(k[i-1], block_size, -3)
-        if M == 4
-          tmp ^= k[i-3]
-        end
-        k[i] = ~k[i-M] ^ tmp ^ Z[J][(i-M) % 62] ^ 3
+    k = key.chars.each_slice(block_size/8).map {|x| x.join.unpack('b*')[0].to_i(2)}.to_a.reverse
+    for i in M..T-1
+      tmp = lcs(k[i-1], block_size, -3)
+      if M == 4
+        tmp ^= k[i-3]
       end
-      k
+      k[i] = ~k[i-M] ^ tmp ^ Z[J][(i-M) % 62] ^ 3
+    end
+    k
   end
 
   # f(x) ((LCS(x,1) & LCS(x,8)) ^ LCS(x,2))
@@ -111,7 +111,7 @@ class Simon
   class InvalidKeySizeException < Exception
   end
 
-  private_class_method :new, :expand_key, :round, :round_inv :f, :lcs, :pad_PKCS7
+  private_class_method :new, :expand_key, :round, :round_inv, :f, :lcs, :pad_PKCS7
 end
 
 
