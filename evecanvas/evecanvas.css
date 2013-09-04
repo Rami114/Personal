@@ -1,0 +1,16 @@
+#mapwrap {
+	padding: 20px;
+	width: 600px;
+	height: 420px;
+	position: relative;
+}
+#map-label {
+	position: absolute;
+	right: 20;
+	top: 20;
+	padding: 5;
+	color: #fff;
+	border-bottom: 1px solid #333333;
+	border-left: 1px solid #333333;
+	background-color: #292929;
+}
