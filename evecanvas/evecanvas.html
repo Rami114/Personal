@@ -1,0 +1,63 @@
+<html>
+	<head>
+		<title>EveCanvas 0.5</title>
+		<link media="all" href="evecanvas.css" type="text/css" rel="stylesheet">
+	</head>
+	<body>
+		<div id="option-wrap">
+ 			<label for="opt-region">Region:</label><select id="opt-region"></select> 
+ 			<label for="opt-constellation">Constellation:</label><select id="opt-constellation"></select>
+ 		</div>
+		<div id="mapwrap"> 
+			<span id="map-label"></span>
+			<canvas id="canvas" width="600" height="400"></canvas>
+		</div>  
+		<!-- Use cloud hosted versions of these or download your own copies. 
+			 It's not guaranteed these will always be on my server! --> 
+		<script src="jquery.js"></script> 
+		<script src="ocanvas.js"></script>
+		<script src="evecanvas.js"></script>
+		<script type="application/javascript">
+			oCanvas.domReady(function () {
+				// as we're loading the system files
+				var myOnClick = function (name){
+					alert('Clicked on ' + name);
+				};
+				jQuery.when(jQuery("#canvas").eveCanvas({ 'system_click' : myOnClick })).done(function () {
+					// fill systems
+			    	var systems = [];
+			    	jQuery("#canvas").eveCanvas('getSystems', systems);
+			    	jQuery.each(systems, function(i, sys) {
+			            jQuery('#opt-region').append(jQuery('<option></option>').val(sys.name).html(sys.name));
+			       	})
+			       	
+			       	// fill constellations
+			       	var cons = [];
+			       	jQuery("#canvas").eveCanvas('getConstellations', cons, jQuery('#opt-region').val());
+			       	jQuery.each(cons, function(i, con) {
+			            jQuery('#opt-constellation').append(jQuery('<option></option>').val(con.url).html(con.name));
+			       	})
+			       	
+			       	// load initial constellation 
+			       	jQuery("#canvas").eveCanvas('changeConstellation', jQuery('#opt-constellation').val(), jQuery('#opt-constellation option:selected').text(), jQuery('#opt-region option:selected').text());
+			       	
+			       	// Listener for change in region
+			       	jQuery('#opt-region').change(function (){
+			       		cons = [];
+			       		jQuery("#canvas").eveCanvas('getConstellations', cons, jQuery('#opt-region').val());
+			       		jQuery('#opt-constellation').find('option').remove();
+				       	jQuery.each(cons, function(i, con) {
+				            jQuery('#opt-constellation').append(jQuery('<option></option>').val(con.url).html(con.name));
+				       	});
+				       	jQuery("#canvas").eveCanvas('changeConstellation', jQuery('#opt-constellation').val(), jQuery('#opt-constellation option:selected').text(), jQuery('#opt-region option:selected').text());
+			       	});
+			       	
+			       	// Listener for change in constellation
+			       	jQuery('#opt-constellation').change(function (){
+			       		jQuery("#canvas").eveCanvas('changeConstellation', jQuery('#opt-constellation').val(), jQuery('#opt-constellation option:selected').text(), jQuery('#opt-region option:selected').text());
+			       	});
+			    });
+		 });
+		</script>
+	</body>
+</html>

@@ -1,12 +1,13 @@
 EveCanvas
 ========
 
-Recreation of the Eve in-game constellation viewer. Based upon the coordinate data from the Eve DB Dump. 
+Recreation of the Eve in-game constellation viewer. Based upon the coordinate data from the Eve DB Dump. There is no license on this work.
 
 Notes:
 
  * All dependencies included
  * Y coordinate is dropped, constellations are projecting onto the 2D canvas using X & Z
+ * JSON data is custom derived from the Eve DB. Tools not included to regenerate this!
 
 Bugs:
 

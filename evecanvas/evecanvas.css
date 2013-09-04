@@ -1,16 +1,33 @@
+body {
+	background-color: #333;
+	color: #fff;
+}
 #mapwrap {
 	padding: 20px;
 	width: 600px;
-	height: 420px;
+	height: 400px;
 	position: relative;
 }
 #map-label {
+	display: none;
 	position: absolute;
 	right: 20;
 	top: 20;
-	padding: 5;
+	padding: 5; 
 	color: #fff;
 	border-bottom: 1px solid #333333;
 	border-left: 1px solid #333333;
 	background-color: #292929;
+}
+#option-wrap {
+	margin-top: 20px;
+	padding-left: 20px;
+	width: 600px;
+}
+#option-wrap select {
+	width: 140px;	
+	margin-left: 10px;
+}
+#option-wrap label {
+	margin-left: 10px;
 }
