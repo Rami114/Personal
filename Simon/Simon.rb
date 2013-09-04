@@ -4,7 +4,7 @@
 # Very basic Ruby implementation of Simon (http://eprint.iacr.org/2013/404.pdf)
 # Initially only Simon with 128 bit blocks and 256 bit key but intent to fully implement it later :)
 #
-# FYI: This is broken at the moment, 'WIP' as you might call it. -_-
+# This is broken at the moment, 'WIP' as you might call it. 
 #
 
 class Simon
@@ -28,7 +28,7 @@ class Simon
     ct = []
     pt.each_slice(2).with_index { |(x,y),index| # 1 block = 2 N-sized slices
       index *= 2
-      (0..68).step(2) { |r|
+      (0..T).step(2) { |r|
         x, y = round(x, y, k[r], k[r+1])
       }
       ct[index] = x 
@@ -49,7 +49,7 @@ class Simon
     pt = []
     ct.each_slice(2).with_index { |(x,y),index| # 1 block = 2 N-sized slices
       index *= 2
-      (0..68).step(2) { |r|
+      (0..T).step(2) { |r|
         x, y = round_inv(x, y, k[r], k[r+1])
       }
       pt[index] = x 
