@@ -7,7 +7,7 @@
 #     * encrypt/decrypt_CBC (buffer, key, iv)
 #     * encrypt/decrypy_ECB (buffer, key)
 #     
-# Note that all parameters should be byte arrays, returns are always byte arrays
+# Note that all parameters should be byte arrays, returns are strings!
 #
 
 class AES_128
