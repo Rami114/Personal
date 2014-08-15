@@ -214,9 +214,9 @@ class AES_128
     b1, b2, b3, b4 = bytes # split up the 4 bytes
     # The matrix view makes it easier to understand (imo)
     [ GALOIS_2[b1] ^ GALOIS_3[b2] ^ b3           ^ b4,        
-      b1       ^ GALOIS_2[b2] ^ GALOIS_3[b3] ^ b4, 
-      b1       ^ b2       ^ GALOIS_2[b3] ^ GALOIS_3[b4], 
-      GALOIS_3[b1] ^ b2       ^ b3         ^ GALOIS_2[b4] ]
+      b1           ^ GALOIS_2[b2] ^ GALOIS_3[b3] ^ b4, 
+      b1           ^ b2           ^ GALOIS_2[b3] ^ GALOIS_3[b4], 
+      GALOIS_3[b1] ^ b2           ^ b3           ^ GALOIS_2[b4] ]
   end
 
   # Inverse of above
@@ -340,7 +340,11 @@ class AES_128
     [0x8d,0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1b,0x36,0x6c,0xd8,0xab,0x4d,0x9a][r]
   end
 
-  private_class_method :new, :expand_key, :key_schedule_core, :sbox, :sbox_inverse, :rcon
+  def self.buffer_XOR (buff_a, buff_b)
+    buff_a.zip(buff_b).map { |a, b| a ^ b unless (a.nil? or b.nil?) }.compact
+  end
+
+  private_class_method :new, :expand_key, :key_schedule_core, :sbox, :sbox_inverse, :rcon, :buffer_XOR
 
 end
 
