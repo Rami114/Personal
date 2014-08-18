@@ -16,7 +16,7 @@ class Simon
   # From Table 3.1 for 128 bit block size and 256 bit key size
   N,M,T,J = 64, 4, 72, 4
 
-  def self.encrypt_128_256 (pt, key)
+  def self.encrypt_128_256(pt, key)
     if key.size != 32 
       raise InvalidKeySizeException.new
     end
@@ -38,7 +38,7 @@ class Simon
     ct.map { |x| x.to_s(2).rjust(128,'0') }.pack('b*')
   end
 
-  def self.decrypt_128_256 (ct, key)
+  def self.decrypt_128_256(ct, key)
     if key.size != 32
       raise InvalidKeySizeException.new
     end
@@ -58,7 +58,7 @@ class Simon
     pt.map { |x| [x.to_s(2).rjust(128,'0')].pack('b*') }.join
   end
 
-  def self.expand_key (key, block_size)
+  def self.expand_key(key, block_size)
     # Break the key into M implicitly N-bit sized pieces
     # Note that k0..kM-1 are in reverse order (i.e. k0 is last)
     # This could most definitely be done better I think
@@ -74,11 +74,11 @@ class Simon
   end
 
   # f(x) ((LCS(x,1) & LCS(x,8)) ^ LCS(x,2))
-  def self.f (x, block_size)
+  def self.f(x, block_size)
     ((lcs(x, block_size, 1) & lcs(x, block_size, 8)) ^ lcs(x, block_size, 2))
   end
 
-  def self.round (x, y, k1, k2)
+  def self.round(x, y, k1, k2)
     y ^= f(x, N)
     y ^= k1
     x ^= f(y, N)
@@ -86,7 +86,7 @@ class Simon
     return x, y
   end
 
-  def self.round_inv (x, y, k1, k2)
+  def self.round_inv(x, y, k1, k2)
     x ^= k2
     x ^= f(y, N)
     y ^= k1
@@ -95,11 +95,11 @@ class Simon
   end
 
   # Left circular shift
-  def self.lcs (bytes, block_size, shift)
+  def self.lcs(bytes, block_size, shift)
     ((bytes << shift) | (bytes >> (block_size - shift))) & ((1<<block_size)-1)    
   end
 
-  def self.pad_PKCS7 (bytes, block_size)
+  def self.pad_PKCS7(bytes, block_size)
     block_size /= 8 # bits to bytes
     padding_count = (block_size - (bytes.size % block_size))
     padding_count.times do

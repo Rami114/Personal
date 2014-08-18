@@ -115,7 +115,7 @@ class AES_128
                0x37,0x39,0x2b,0x25,0x0f,0x01,0x13,0x1d,0x47,0x49,0x5b,0x55,0x7f,0x71,0x63,0x6d,
                0xd7,0xd9,0xcb,0xc5,0xef,0xe1,0xf3,0xfd,0xa7,0xa9,0xbb,0xb5,0x9f,0x91,0x83,0x8d]
 
-  def self.encrypt_CBC (buffer, key, iv)
+  def self.encrypt_CBC(buffer, key, iv)
     crypt = ''
     buffer.each_slice(16) do |block| 
       crypt_block = encryptAES_128(buffer_XOR(block, iv), key)
@@ -125,7 +125,7 @@ class AES_128
     crypt
   end
 
-  def self.decrypt_CBC (buffer, key, iv)
+  def self.decrypt_CBC(buffer, key, iv)
     message = ''
     buffer.each_slice(16) do |block| 
       message_block = decryptAES_128(block, key)
@@ -137,13 +137,13 @@ class AES_128
 
   ### ECB mode ###
 
-  def self.encrypt_ECB (buffer, key)
+  def self.encrypt_ECB(buffer, key)
     cipher = ''
     buffer.each_slice(16) { |block| cipher += encryptAES_128(block, key).pack('C*') }
     cipher
   end
 
-  def self.decrypt_ECB (buffer, key)
+  def self.decrypt_ECB(buffer, key)
     cleartext = ''
     buffer.each_slice(16) { |block| cleartext += decryptAES_128(block, key).pack('C*') }
     cleartext
@@ -152,7 +152,7 @@ class AES_128
   ### AES-128  ###
 
   # Takes a byte buffer representing clear text and encrypt it using key
-  def self.encryptAES_128 (buffer, key)
+  def self.encryptAES_128(buffer, key)
     key = expand_key(key)
 
     # Initial round
@@ -171,7 +171,7 @@ class AES_128
   end
 
   # Takes a key and the encrypted buffer to decrypt AES-128
-  def self.decryptAES_128 (buffer, key)
+  def self.decryptAES_128(buffer, key)
     # Key expansion
     key = expand_key(key)
     
@@ -192,13 +192,13 @@ class AES_128
 
   # See http://en.wikipedia.org/wiki/Advanced_Encryption_Standard#The_mix_columns_step
   # and http://en.wikipedia.org/wiki/Rijndael_mix_columns (crickey)
-  def self.mix_columns (state)
+  def self.mix_columns(state)
     # mix every column of 4 bytes
     mix_column(state[0, 4]) + mix_column(state[4, 4]) + mix_column(state[8, 4]) + mix_column(state[12, 4])
   end
 
   # Inverse of above
-  def self.mix_columns_inverse (state)
+  def self.mix_columns_inverse(state)
     mix_column_inverse(state[0, 4]) + mix_column_inverse(state[4, 4]) + mix_column_inverse(state[8, 4]) + mix_column_inverse(state[12, 4])
   end
 
@@ -210,7 +210,7 @@ class AES_128
   # Mucho thanks to http://www.scribd.com/doc/33686967/How-to-Implement-AES-in-Ruby for the lookup tables (and by proxy Berkeley guys!)
   # Also great to validate all the code work with the above
   # Galois field multiplication lookups
-  def self.mix_column (bytes)
+  def self.mix_column(bytes)
     b1, b2, b3, b4 = bytes # split up the 4 bytes
     # The matrix view makes it easier to understand (imo)
     [ GALOIS_2[b1] ^ GALOIS_3[b2] ^ b3           ^ b4,        
@@ -226,7 +226,7 @@ class AES_128
   # r2 = 14a2 + 9a1 + 13a0 + 11a3
   # r3 = 14a3 + 9a2 + 13a1 + 11a0
   # Lookup tables are a godsend (and line saver)
-  def self.mix_column_inverse (bytes)
+  def self.mix_column_inverse(bytes)
     b1, b2, b3, b4 = bytes
     [ GALOIS_14[b1] ^ GALOIS_9[b4] ^ GALOIS_13[b3] ^ GALOIS_11[b2], 
       GALOIS_14[b2] ^ GALOIS_9[b1] ^ GALOIS_13[b4] ^ GALOIS_11[b3], 
@@ -237,13 +237,13 @@ class AES_128
   # See http://en.wikipedia.org/wiki/Advanced_Encryption_Standard#The_shift_rows_step
   # and http://www.quadibloc.com/crypto/co040401.htm
   # Shift second..last rows 1..n-1 left (or right for inverse) 
-  def self.shift_rows (state)
+  def self.shift_rows(state)
     # array offsets, thanks to Chris Hulbert for the great explanations and one-line approach
     [0,5,10,15,4,9,14,3,8,13,2,7,12,1,6,11].map { |o| state[o] }
   end
 
   # Inverse of above 
-  def self.shift_rows_inverse (state)
+  def self.shift_rows_inverse(state)
     # inverse array offsets
     [0,13,10,7,4,1,14,11,8,5,2,15,12,9,6,3].map { |o| state[o] }
   end
@@ -255,7 +255,7 @@ class AES_128
 
   # We need to expand our key, which should be a byte array
   # See: http://en.wikipedia.org/wiki/Rijndael_key_schedule
-  def self.expand_key (key)
+  def self.expand_key(key)
     # keysize constants
     n, b = 16, 176
     key = key[0..n-1] # the first n bytes are the key itself, obv limited to 16 bytes
@@ -279,7 +279,7 @@ class AES_128
   end
 
   # Takes a 4 byte variable and an rcon value
-  def self.key_schedule_core (bytes, r)
+  def self.key_schedule_core(bytes, r)
     bytes = bytes[1, 3] + bytes[0, 1] # rotate to the left (1 byte)
     bytes = sbox_bytes(bytes) # replace each byte with sbox + byte
     bytes[0] ^= rcon(r) # run rcon and xor with left-most byte
@@ -287,17 +287,17 @@ class AES_128
   end
 
   # Takes a 4 byte variable and replaces each byte with the sbox and the byte
-  def self.sbox_bytes (bytes)
+  def self.sbox_bytes(bytes)
     bytes.map {|b| sbox(b)}
   end
 
   # Inverse of above 
-  def self.sbox_bytes_inverse (bytes)
+  def self.sbox_bytes_inverse(bytes)
     bytes.map {|b| sbox_inverse(b)}
   end
 
   # Get the right entry from the sbox
-  def self.sbox (b) # http://en.wikipedia.org/wiki/Rijndael_key_schedule#S-box
+  def self.sbox(b) # http://en.wikipedia.org/wiki/Rijndael_key_schedule#S-box
     [0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76,
      0xca,0x82,0xc9,0x7d,0xfa,0x59,0x47,0xf0,0xad,0xd4,0xa2,0xaf,0x9c,0xa4,0x72,0xc0,
      0xb7,0xfd,0x93,0x26,0x36,0x3f,0xf7,0xcc,0x34,0xa5,0xe5,0xf1,0x71,0xd8,0x31,0x15,
@@ -317,7 +317,7 @@ class AES_128
   end
 
   # Inverse of above
-  def self.sbox_inverse (b) # http://en.wikipedia.org/wiki/Rijndael_key_schedule#S-box
+  def self.sbox_inverse(b) # http://en.wikipedia.org/wiki/Rijndael_key_schedule#S-box
     [0x52,0x09,0x6a,0xd5,0x30,0x36,0xa5,0x38,0xbf,0x40,0xa3,0x9e,0x81,0xf3,0xd7,0xfb,
      0x7c,0xe3,0x39,0x82,0x9b,0x2f,0xff,0x87,0x34,0x8e,0x43,0x44,0xc4,0xde,0xe9,0xcb,
      0x54,0x7b,0x94,0x32,0xa6,0xc2,0x23,0x3d,0xee,0x4c,0x95,0x0b,0x42,0xfa,0xc3,0x4e,
@@ -336,11 +336,11 @@ class AES_128
      0x17,0x2b,0x04,0x7e,0xba,0x77,0xd6,0x26,0xe1,0x69,0x14,0x63,0x55,0x21,0x0c,0x7d][b]
   end
   # do the rcon, only need a part of this table
-  def self.rcon (r) # http://en.wikipedia.org/wiki/Rijndael_key_schedule#Rcon
+  def self.rcon(r) # http://en.wikipedia.org/wiki/Rijndael_key_schedule#Rcon
     [0x8d,0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1b,0x36,0x6c,0xd8,0xab,0x4d,0x9a][r]
   end
 
-  def self.buffer_XOR (buff_a, buff_b)
+  def self.buffer_XOR(buff_a, buff_b)
     buff_a.zip(buff_b).map { |a, b| a ^ b unless (a.nil? or b.nil?) }.compact
   end
 
